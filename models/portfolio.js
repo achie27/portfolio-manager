@@ -1,21 +1,23 @@
 const mongoose = require('mongoose');
 
-
-let holdingsSchema = new mongoose.Schema({
-	holding : {
-		type : mongoose.Schema.Types.ObjectId, 
-		ref : 'Holding'
+let securitySchema = new mongoose.Schema({
+	holdingId : {
+		type : mongoose.Schema.ObjectId, 
+		ref : 'Holding',
+		required : true
 	},
 
 	avgBuyPrice : {
 		type : Number,
-		default : 0,
 		min : 0,
-		max : Number.MAX_SAFE_INTEGER
+		max : Number.MAX_SAFE_INTEGER,
+		required : true
 	},
 
 	shares : {
 		type : Number,
+		min : 0,
+		max : Number.MAX_SAFE_INTEGER,
 		required : true
 	}
 });
@@ -27,11 +29,12 @@ let portfolioSchema = new mongoose.Schema({
 		ref : 'Trade'
 	}],
 
-	holdings : [holdingsSchema],
+	securities : [securitySchema],
 
 	user : {
 		type : mongoose.Schema.ObjectId, 
-		ref : 'User'
+		ref : 'User',
+		required : true
 	}
 });
 

@@ -5,6 +5,16 @@ let userSchema = new mongoose.Schema({
 		type : String,
 		required : true
 	},
+
+	password : {
+		type : String,
+		required : true
+	},
+
+	portfolios : [{
+		type : mongoose.Schema.ObjectId,
+		ref : 'Portfolio'
+	}]
 });
 
 module.exports = mongoose.model('User', userSchema);

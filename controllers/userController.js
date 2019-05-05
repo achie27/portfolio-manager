@@ -20,8 +20,6 @@ exports.login = async (req, res) => {
 	} else {
 		res.status(400).send('Wrong username or password');
 	}
-
-	console.log(req.session.userId);
 };
 
 exports.logout = async (req, res) => {
@@ -43,7 +41,12 @@ exports.signup = async (req, res) => {
 			password : req.body.password
 		});
 
-		await newUser.save();
-		res.status(200).send('Signed up ' + req.body.username);
+		try{
+			await newUser.save();
+			res.status(200).send('Signed up ' + req.body.username);
+		}
+		catch(err){
+			res.status(500).send(err.message);			
+		}
 	}
 };

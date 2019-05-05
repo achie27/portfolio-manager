@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const Portfolio = require('../models/portfolio');
 const User = require('../models/user');
 const Holding = require('../models/holding');
@@ -40,14 +42,20 @@ exports.readAll = async (req, res) => {
 
 exports.create = async (req, res) => {
 	
-	try {
-
-		for(let obj of req.body.securities){
-			if((await Holding.findById(obj.holdingId)) === null){
-				return res.status(400).send('Holding/Stock/Security does not exist');
-			}
+	for(let obj of req.body.securities){
+		if((await Holding.findById(obj.holdingId)) === null){
+			return res.status(400).send('Holding/Stock/Security does not exist');
 		}
+	}
 
+	if(!req.session.userId)
+		return res.status(400).send('Log in to create a portfolio');
+
+
+	const session = await mongoose.startSession();
+	session.startTransaction();
+
+	try {
 		let newPortfolio = new Portfolio({
 			securities : req.body.securities,
 			user : req.session.userId
@@ -58,9 +66,15 @@ exports.create = async (req, res) => {
 
 		user.portfolios.push(savedPortfolio._id);
 		await user.save();
+		
+		await session.commitTransaction();
+		session.endSession();
+
 		res.send(savedPortfolio);
 
 	} catch (err) {
-		res.status(400).send(err.message);
+		await session.abortTransaction();
+		session.endSession();
+		res.status(500).send(err.message);
 	}
 };

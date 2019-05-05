@@ -31,27 +31,19 @@ app.use(cors());
 app.use(bp.urlencoded({extended:false}));
 app.use(bp.json());
 
-app.use('/api/trade', tradeRouter);
-app.use('/api/portfolio', portfolioRouter);
-app.use('/api/holding', holdingRouter);
 app.use('/api/user', userRouter);
+app.use('/api/holding', holdingRouter);
+app.use('/api/portfolio', portfolioRouter);
+app.use('/api/trade', tradeRouter);
 
-app.use((req, res, next) => {
-	next(httpErr(404));
+app.use((req, res) => {
+	res.status(404).send("Endpoint doesn't exist");
 });
-
-app.use((err, req, res, next) => {
-	res.locals.message = err.message;
-	res.locals.error = err;
-
-	res.status(err.status || 500);
-});
-
 
 let server = app.listen(PORT, () => {
 	console.log("Server started.");
 
-	mongoose.connect(secret.URI, (err) => {
+	mongoose.connect(secret.URI, {useNewUrlParser: true}, (err) => {
 		if(err){
 			server.close();
 			return console.log("Closing");

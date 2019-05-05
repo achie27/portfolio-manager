@@ -18,13 +18,11 @@
   },
   "homepage": "https://github.com/achie27/smallcase-task#readme",
   "dependencies": {
-    "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-session": "^1.16.1",
     "helmet": "^3.16.0",
-    "http-errors": "^1.7.2",
     "mongoose": "^5.5.4",
     "morgan": "^1.9.1"
   },

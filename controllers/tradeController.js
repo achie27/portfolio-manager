@@ -250,8 +250,14 @@ exports.deleteOne = async (req, res) => {
 		preTradeAvgBuyPrice = preTradeAvgBuyPrice / preTradeShares;
 	}
 
-	origPortfolio.securities[hIndex].avgBuyPrice = preTradeAvgBuyPrice;
-	origPortfolio.securities[hIndex].shares = preTradeShares;
+	// This trade introduced new holding, so that needs to be removed
+	if(preTradeShares === 0 && origTrade.type === 'BUY'){
+		origPortfolio.securities.pull(alias._id);
+	} else {
+		origPortfolio.securities[hIndex].avgBuyPrice = preTradeAvgBuyPrice;
+		origPortfolio.securities[hIndex].shares = preTradeShares;
+	}
+	
 	origPortfolio.trades.pull(origTrade._id);
 
 	// 2 collections affected

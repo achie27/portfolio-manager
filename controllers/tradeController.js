@@ -150,7 +150,7 @@ exports.updateOne = async (req, res) => {
 		);
 	}
 
-	let tradeObj = {...origTrade}, holdingObj = {...alias};
+	let tradeObj = {...origTrade._doc}, holdingObj = {};
 
 	// If trade's type need to be changed (too)
 	if(req.body.type){
@@ -188,6 +188,8 @@ exports.updateOne = async (req, res) => {
 			);
 		} else if(tradeObj.type === 'SELL'){
 			holdingObj.shares = preTradeShares - tradeObj.shares;
+			if(holdingObj.shares < 0)
+				return res.status(400).send('Not enough shares to sell');
 			holdingObj.avgBuyPrice = preTradeAvgBuyPrice;
 		}
 	}

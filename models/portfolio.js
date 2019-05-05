@@ -1,7 +1,30 @@
 const mongoose = require('mongoose');
 
+/*
+	.trades - 
+		Holds ids of all the trades placed on this portfolio.
+		Being a reference makes its representation and 
+		calculation easier
+
+	.securities -
+		Holds all Holdings introduced 
+
+		.holding - 
+			Contains the DB generated ID of holding
+
+		.avgBuyPrice -
+			The average buy price
+
+		.shares -
+			Number of shares for this holding
+	
+	.user -
+		The DB generated userId of this portfolio's creator  
+
+*/
+
 let securitySchema = new mongoose.Schema({
-	holdingId : {
+	holding : {
 		type : mongoose.Schema.ObjectId, 
 		ref : 'Holding',
 		required : true

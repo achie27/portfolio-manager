@@ -17,16 +17,18 @@ exports.getHoldings = async (req, res) => {
 	let portfolio = await Portfolio.findById(
 		req.params.portfolioId, 'securities'
 	)
-	.populate('securities.holdingId');
+	.populate('securities.holding');
 
 	res.send(portfolio.securities);
 };
 
 exports.readOne = async (req, res) => {
+
+	// Get the portfolio and expand the holdings
 	let portfolio = await Portfolio.findById(
 		req.params.portfolioId
 	)
-	.populate('securities.holdingId');
+	.populate('securities.holding');
 
 	res.send(portfolio);
 };
@@ -35,23 +37,27 @@ exports.readAll = async (req, res) => {
 	let portfolios = await Portfolio.find(
 		{}
 	)
-	.populate('securities.holdingId');
+	.populate('securities.holding');
 
 	res.send(portfolios);
 };
 
 exports.create = async (req, res) => {
 	
+	// Check if Holdings are correct and get their id
 	for(let obj of req.body.securities){
-		if((await Holding.findById(obj.holdingId)) === null){
+		let holding = await Holding.findOne({ticker : obj.holding});
+		if(!holding){
 			return res.status(400).send('Holding/Stock/Security does not exist');
 		}
+		obj.holding = holding._id;
 	}
 
 	if(!req.session.userId)
 		return res.status(400).send('Log in to create a portfolio');
 
-
+	// Need to create a transaction because 2 collections are being updated
+	// Can't have one changed and the other not
 	const session = await mongoose.startSession();
 	session.startTransaction();
 

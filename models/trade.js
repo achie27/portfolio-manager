@@ -1,13 +1,37 @@
 const mongoose = require('mongoose');
 
+/*
+	.type -
+		Whether the trade SELLs or BUYs shares
+
+	.price -
+		The price at which each share was bought
+		It is required only if the trade was of BUY type
+
+	.shares -
+		The shares associated with this trade
+
+	.holding -
+		The DB generated ID of associated holding
+
+	.portfolioId -
+		The DB generated ID of associated portfolio
+
+	.userId
+		The DB generated ID of associated user	
+
+*/
+
+
 let tradeSchema = mongoose.Schema({
 	type : {
 		type : String,
+		uppercase : true,
+		trim : true,
 		enum : ['SELL', 'BUY'], 
-		required : true
+		required : true	
 	},
 
-	// Gets filled with either the buying price or the average buy price (which is actually the selling price) 
 	price : {
 		type : Number,
 		required : () => this.type === 'BUY',
@@ -29,7 +53,7 @@ let tradeSchema = mongoose.Schema({
 		required : true
 	},
 	
-	holdingId : {
+	holding : {
 		type : mongoose.Schema.ObjectId,
 		ref : 'Holding',
 		required : true
